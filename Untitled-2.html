@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>Wordle Streak Counter</title>
+  </head>
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <body>
+    <div style="text-align:center;margin:auto; padding-top:100px; ">
+      <h1>Welcome</h1>
+      <h3>Your current counter is <h2 id="counter">1</h2></h3>
+    </div>
+
+  </body>
+  <script>
+    
+    var currentDate; //current date
+    var lastDate; //last count updated date
+    const timeInterval = 86400000; // miliseconds for 1 day
+    var nextDayStandard; //01:AM next day 
+    var currentDateMilisec;
+
+    $(document).ready(function() {
+      if(localStorage.length == 0) {
+
+        currentDate = new Date();
+        // localStorage.setItem('lastVisitDate', currentDate);
+        localStorage.setItem('nextStandard', createNextStandard(currentDate));
+        localStorage.setItem('count', 1);
+
+      } else {
+        currentDateMilisec = new Date().getTime();
+        // lastDate = localStorage.getItem('lastVisitDate');
+        
+        nextDayStandard = localStorage.getItem("nextStandard");
+        console.log(currentDateMilisec);
+        console.log(nextDayStandard);
+
+        if(currentDateMilisec < nextDayStandard) {
+          var currentCount = localStorage.getItem('count');
+          $("#counter").html(currentCount);
+        } else if (nextDayStandard < currentDateMilisec <= nextDayStandard + 86400000) {
+
+          var currentCount = localStorage.getItem('count')*1 + 1;
+          localStorage.setItem('count', currentCount);
+          $("#counter").html(currentCount);
+          // localStorage.setItem('lastVisitDate', currentDate);
+          localStorage.setItem('nextStandard', createNextStandard(currentDate));
+        }
+
+        if(currentDateMilisec > nextDayStandard + 86400000) {
+          
+          localStorage.setItem('count', 1);
+          var currentCount = 1;
+          $("#counter").html(currentCount);
+          // localStorage.setItem('lastVisitDate', currentDate);
+          localStorage.setItem('nextStandard', createNextStandard(currentDate));
+
+        }
+      }
+
+      function createNextStandard(currentDate) {
+        // console.log(new Date(currentDate));
+        var spiltedTodayStandard = new Date(currentDate).toString().split(" ");
+        var newMergedTodayStandard = spiltedTodayStandard[0] +" "+ spiltedTodayStandard[1] +" "+ spiltedTodayStandard[2] +" "+ spiltedTodayStandard[3] + " 01:00:00 " + spiltedTodayStandard[5];
+        // console.log(newMergedTodayStandard);
+        var todayStandard = new Date(newMergedTodayStandard).getTime();//miliseconds for today 01:AM
+        // console.log(todayStandard);
+        return todayStandard + 86400000; //miliseconds for tomorrow 01:AM
+      }
+    })
+    
+  </script>
+</html>
